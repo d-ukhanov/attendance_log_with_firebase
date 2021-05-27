@@ -1,5 +1,4 @@
 import 'package:attendance_log_with_firebase/screens/attendance/attendance.dart';
-import 'package:attendance_log_with_firebase/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:attendance_log_with_firebase/models/subject.dart';
 import 'package:page_transition/page_transition.dart';

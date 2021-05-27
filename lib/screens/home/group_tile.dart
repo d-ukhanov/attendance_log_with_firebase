@@ -25,7 +25,6 @@ class GroupTile extends StatelessWidget {
                       style: TextStyle(color: Colors.white, fontSize: 10),
                       textAlign: TextAlign.center,
                     ),
-                    //backgroundImage: AssetImage('assets/coffee_icon.png'),
                     radius: 20.0,
                     backgroundColor: colorEnd,
                   ),

@@ -11,3 +11,11 @@ class AttendanceForGroupAndSubject {
 
   AttendanceForGroupAndSubject({this.attendanceMap, this.date});
 }
+
+class StudentStates {
+  final String typeState;
+  final int countStates;
+  final color;
+
+  StudentStates(this.typeState, this.countStates, this.color);
+}

@@ -1,13 +1,10 @@
 import 'package:attendance_log_with_firebase/models/student.dart';
 import 'package:attendance_log_with_firebase/models/subject.dart';
 import 'package:attendance_log_with_firebase/screens/attendance/attendance_table.dart';
-import 'package:attendance_log_with_firebase/screens/subjects/subject_list.dart';
 import 'package:attendance_log_with_firebase/services/auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:attendance_log_with_firebase/services/database.dart';
 import 'package:provider/provider.dart';
-import 'package:attendance_log_with_firebase/screens/home/monitor_group_list.dart';
 import 'package:attendance_log_with_firebase/models/group.dart';
 import 'package:attendance_log_with_firebase/shared/restart_widget.dart';
 import 'package:attendance_log_with_firebase/shared/constants.dart';
@@ -42,7 +39,7 @@ class _AttendanceState extends State<Attendance> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(seconds: 3),
+      duration: Duration(seconds: 5),
       vsync: this,
     )..repeat(reverse: true);
 
@@ -71,7 +68,6 @@ class _AttendanceState extends State<Attendance> with TickerProviderStateMixin {
                   .attendance,
               initialData: null)
         ],
-        //value: DataForAttendance(groupId: groupId, subjectId: subjectId),
         child: Scaffold(
           backgroundColor: colorBackground,
           appBar: PreferredSize(
@@ -90,7 +86,7 @@ class _AttendanceState extends State<Attendance> with TickerProviderStateMixin {
                           color: colorBackground,
                         ),
                         label: Text(
-                          'logout',
+                          'выйти',
                           style: TextStyle(color: Colors.black),
                         ),
                         onPressed: () async {

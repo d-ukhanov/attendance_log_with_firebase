@@ -35,10 +35,9 @@ dependencies:
   provider: ^5.0.0
   flutter_spinkit: "^4.1.2"
   intl: ^0.17.0
-  editable: "^1.1.1"
-  table_sticky_headers: ^2.0.0
   page_transition: "^2.0.2"
   date_range_picker: ^1.0.5
+  charts_flutter: ^0.10.0
 
 dev_dependencies:
   flutter_test:

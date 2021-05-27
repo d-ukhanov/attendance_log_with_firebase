@@ -1,6 +1,7 @@
 import 'package:attendance_log_with_firebase/models/subject.dart';
 import 'package:attendance_log_with_firebase/screens/subjects/subject_list.dart';
 import 'package:attendance_log_with_firebase/services/auth.dart';
+import 'package:attendance_log_with_firebase/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:attendance_log_with_firebase/services/database.dart';
 import 'package:provider/provider.dart';
@@ -29,11 +30,13 @@ class _SubjectsState extends State<Subjects> with TickerProviderStateMixin {
   AnimationController _controller;
   Animation<Color> _color;
 
+  bool loading = false;
+
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(seconds: 3),
+      duration: Duration(seconds: 5),
       vsync: this,
     )..repeat(reverse: true);
 
@@ -68,7 +71,7 @@ class _SubjectsState extends State<Subjects> with TickerProviderStateMixin {
                       TextButton.icon(
                         icon: Icon(Icons.person, color: colorBackground),
                         label: Text(
-                          'logout',
+                          'выйти',
                           style: TextStyle(color: Colors.black),
                         ),
                         onPressed: () async {
@@ -80,7 +83,9 @@ class _SubjectsState extends State<Subjects> with TickerProviderStateMixin {
               },
             ),
           ),
-          body: SubjectList(),
+          body: loading
+            ? Loading()
+              : SubjectList(),
         ),
       ),
     );

@@ -1,11 +1,9 @@
 import 'package:attendance_log_with_firebase/services/auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:attendance_log_with_firebase/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:attendance_log_with_firebase/screens/home/monitor_group_list.dart';
 import 'package:attendance_log_with_firebase/models/group.dart';
-import 'package:attendance_log_with_firebase/models/user.dart';
 import 'package:attendance_log_with_firebase/shared/restart_widget.dart';
 import 'package:attendance_log_with_firebase/shared/constants.dart';
 import 'package:flutter/animation.dart';
@@ -32,7 +30,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(seconds: 3),
+      duration: Duration(seconds: 5),
       vsync: this,
     )..repeat(reverse: true);
 
@@ -65,7 +63,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         TextButton.icon(
                           icon: Icon(Icons.person, color: colorBackground),
                           label: Text(
-                            'logout',
+                            'выйти',
                             style: TextStyle(color: Colors.black),
                           ),
                           onPressed: () async {
@@ -78,7 +76,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         TextButton.icon(
                           icon: Icon(Icons.autorenew, color: colorBackground),
                           label: Text(
-                            'restart',
+                            'обновить',
                             style: TextStyle(color: Colors.black),
                           ),
                           onPressed: () => RestartWidget.restartApp(context),
