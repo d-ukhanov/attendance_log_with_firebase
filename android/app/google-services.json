@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "728155207662",
+    "project_id": "attendance-log-dc4a2",
+    "storage_bucket": "attendance-log-dc4a2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728155207662:android:31a7b99d6e14027bd500ff",
+        "android_client_info": {
+          "package_name": "com.example.attendance_log_with_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "728155207662-th0bv1q2f3m4jecbeclbqrjhbk29m4sl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8TAqGu-Qe2vg3MMTusePwM83MP2jO7Xk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "728155207662-th0bv1q2f3m4jecbeclbqrjhbk29m4sl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "728155207662-7k3r5s9jk9ctfudc1c90ir7d8uqfanrb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.attendanceLogWithFirebase"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728155207662:android:f855880b497c71add500ff",
+        "android_client_info": {
+          "package_name": "com.ukhanovpks417.attendance_log"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "728155207662-th0bv1q2f3m4jecbeclbqrjhbk29m4sl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8TAqGu-Qe2vg3MMTusePwM83MP2jO7Xk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "728155207662-th0bv1q2f3m4jecbeclbqrjhbk29m4sl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "728155207662-7k3r5s9jk9ctfudc1c90ir7d8uqfanrb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.attendanceLogWithFirebase"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

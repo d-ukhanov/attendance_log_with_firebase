@@ -1,7 +1,16 @@
 # attendance_log_with_firebase
 
-Educational institution attendance log with Flutter & Dart & Firebase Cloud Firestore
+A new Flutter project.
 
-![Alt text](screenshots/Screenshot_1.png?raw=true "Home Screen")
+## Getting Started
 
-![Alt text](screenshots/Screenshot_2.png?raw=true "Attendance Screen")
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
