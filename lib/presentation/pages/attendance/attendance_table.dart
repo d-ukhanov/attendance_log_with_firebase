@@ -1,34 +1,36 @@
-// Dart imports:
-import 'dart:async';
-
-import 'package:attendance_log_with_firebase/core/domain/models/student.dart';
-
-// Project imports:
-import 'package:attendance_log_with_firebase/core/domain/repositories/attendance_repository.dart';
-import 'package:attendance_log_with_firebase/presentation/pages/attendance/dialogs/add_date_bottom_sheet.dart';
-import 'package:attendance_log_with_firebase/presentation/pages/attendance/dialogs/student_attendance_dialog.dart';
-import 'package:attendance_log_with_firebase/src/constants/constants_ui.dart';
-
 // Flutter imports:
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Package imports:
 import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
+// Project imports:
+import 'package:attendance_log_with_firebase/core/domain/models/student.dart';
+import 'package:attendance_log_with_firebase/core/domain/repositories/attendance_repository.dart';
+import 'package:attendance_log_with_firebase/presentation/pages/attendance/bloc/date_picker_bloc.dart';
+import 'package:attendance_log_with_firebase/presentation/pages/attendance/dialogs/add_date_bottom_sheet.dart';
+import 'package:attendance_log_with_firebase/presentation/pages/attendance/dialogs/student_attendance_dialog.dart';
+import 'package:attendance_log_with_firebase/src/constants/constants_ui.dart';
+
 class AttendanceTable extends StatefulWidget {
   final String groupId;
   final String subjectId;
   final List<Student> students;
   final List<AttendanceForGroupAndSubject>? attendance;
+  final DateTime startDate;
+  final DateTime endDate;
 
   const AttendanceTable({
     required this.groupId,
     required this.subjectId,
     required this.students,
     required this.attendance,
+    required this.startDate,
+    required this.endDate,
   });
 
   @override
@@ -41,9 +43,7 @@ class _AttendanceTableState extends State<AttendanceTable> {
   late final DateTime now;
   late final DateFormat format;
   late final List<Student> students;
-  late DateTime endDate;
-  late DateTime startDate;
-  late final StreamController<List<DateTime>> dateController;
+
   late final AddDateBottomSheet addDateBottomSheetClass;
   final List<String> columnDateCount = [];
 
@@ -52,13 +52,6 @@ class _AttendanceTableState extends State<AttendanceTable> {
     super.initState();
 
     _init();
-  }
-
-  @override
-  void dispose() {
-    dateController.close();
-
-    super.dispose();
   }
 
   @override
@@ -77,17 +70,21 @@ class _AttendanceTableState extends State<AttendanceTable> {
   Widget _buildDatePickerButton(BuildContext context) {
     return Center(
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: ConstantsUI.colorBegin),
+        style:
+            ElevatedButton.styleFrom(backgroundColor: ConstantsUI.colorBegin),
         onPressed: () async {
           final DateTimeRange? picked = await showDateRangePicker(
             context: context,
             locale: const Locale('ru', 'RU'),
-            initialDateRange: DateTimeRange(start: startDate, end: endDate),
+            initialDateRange:
+                DateTimeRange(start: widget.startDate, end: widget.endDate),
             firstDate: DateTime(now.year - 5, now.month, now.day),
             lastDate: DateTime(now.year + 5, now.month, now.day),
           );
-          if (picked != null) {
-            dateController.add([picked.start, picked.end]);
+          if (picked != null && mounted) {
+            context.read<DatePickerBloc>().add(
+                  ChangeDateEvent(startDate: picked.start, endDate: picked.end),
+                );
           }
         },
         child: const Text(
@@ -99,24 +96,19 @@ class _AttendanceTableState extends State<AttendanceTable> {
   }
 
   Widget _buildTableWidget(BuildContext context) {
-    return StreamBuilder(
-      stream: dateController.stream,
-      builder: (context, _) {
-        return Expanded(
-          child: Container(
-            margin: const EdgeInsets.all(10),
-            child: SingleChildScrollView(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _getStudentsColumn(),
-                  _getAttendanceColumn(context),
-                ],
-              ),
-            ),
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.all(10),
+        child: SingleChildScrollView(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _getStudentsColumn(),
+              _getAttendanceColumn(context),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -153,7 +145,7 @@ class _AttendanceTableState extends State<AttendanceTable> {
             height: 50.0,
             child: TextButton(
               style: TextButton.styleFrom(
-                primary: ConstantsUI.colorBackground,
+                foregroundColor: ConstantsUI.colorBackground,
               ),
               child: Text(
                 student.fio,
@@ -248,7 +240,7 @@ class _AttendanceTableState extends State<AttendanceTable> {
             height: 60.0,
             child: TextButton(
               style: TextButton.styleFrom(
-                primary: ConstantsUI.colorBackground,
+                foregroundColor: ConstantsUI.colorBackground,
               ),
               child: Text(
                 DateFormat(
@@ -337,8 +329,8 @@ class _AttendanceTableState extends State<AttendanceTable> {
     return Center(
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: ConstantsUI.colorBegin,
-          onPrimary: Colors.black,
+          foregroundColor: Colors.black,
+          backgroundColor: ConstantsUI.colorBegin,
         ),
         child: const Text(
           'Добавить занятие',
@@ -353,8 +345,7 @@ class _AttendanceTableState extends State<AttendanceTable> {
   void _init() {
     now = DateTime.now();
     initializeDateFormatting('ru');
-    format = DateFormat('y-MM-dd HH:mm');
-    final DateFormat formatCompare = DateFormat('y-MM-dd');
+    format = DateFormat('y-MM-dd hh:mm');
 
     //Get the list of students from the stream and sort them alphabetically
     students = widget.students;
@@ -363,50 +354,15 @@ class _AttendanceTableState extends State<AttendanceTable> {
     });
 
     //Get lesson date on student attendance
-    final List<String> allColumnDateCount = [];
-
     if (widget.attendance != null && (widget.attendance?.isNotEmpty ?? false)) {
       for (final attendancePerStudent in widget.attendance!) {
-        allColumnDateCount.add(attendancePerStudent.date);
+        columnDateCount.add(attendancePerStudent.date);
       }
 
-      allColumnDateCount.sort((a, b) {
+      columnDateCount.sort((a, b) {
         return a.compareTo(b);
       });
     }
-
-    if (allColumnDateCount.isNotEmpty) {
-      endDate =
-          format.parse(allColumnDateCount.last).add(const Duration(days: 1));
-    } else {
-      endDate = now;
-    }
-
-    startDate = endDate.subtract(const Duration(days: 7));
-
-    for (final e in allColumnDateCount) {
-      final date = format.parse(e);
-      if (date.isAfter(startDate) && date.isBefore(endDate)) {
-        columnDateCount.add(e);
-      }
-    }
-
-    //Track changes in the selected date range and update the date array
-    dateController = StreamController<List<DateTime>>.broadcast();
-    dateController.stream.listen((value) {
-      startDate = value.first;
-      endDate = value.last;
-      columnDateCount.clear();
-
-      for (final e in allColumnDateCount) {
-        final date = formatCompare.parse(e);
-        if ((date.isAfter(startDate) && date.isBefore(endDate)) ||
-            date.isAtSameMomentAs(startDate) ||
-            date.isAtSameMomentAs(endDate)) {
-          columnDateCount.add(e);
-        }
-      }
-    });
 
     addDateBottomSheetClass = AddDateBottomSheet(
       attendanceRepository: attendanceRepository,
@@ -415,9 +371,22 @@ class _AttendanceTableState extends State<AttendanceTable> {
       deleteDate: (date) => setState(
         () => columnDateCount.remove(date),
       ),
-      addDate: (date) => setState(
-        () => columnDateCount.add(date),
-      ),
+      addDate: (date) {
+        {
+          final newDate = format.parse(date);
+          final lastDate = format.parse(columnDateCount.last);
+          if(newDate.isAfter(lastDate)) {
+            context.read<DatePickerBloc>().add(
+              ChangeDateEvent(endDate: format.parse(date)),
+            );
+          } else {
+            columnDateCount.add(date);
+            columnDateCount.sort((a, b) {
+              return a.compareTo(b);
+            });
+          }
+        }
+      },
       groupId: widget.groupId,
       subjectId: widget.subjectId,
       students: students,
@@ -428,13 +397,15 @@ class _AttendanceTableState extends State<AttendanceTable> {
   String _findStateStudent(date, studentId) {
     String studentState = 'Присутствовал';
 
-    for (final element in widget.attendance!) {
-      if (element.date == date && element.attendanceMap.isNotEmpty) {
-        element.attendanceMap.forEach((id, state) {
-          if (id == studentId) {
-            studentState = state;
-          }
-        });
+    if (widget.attendance != null) {
+      for (final element in widget.attendance!) {
+        if (element.date == date && element.attendanceMap.isNotEmpty) {
+          element.attendanceMap.forEach((id, state) {
+            if (id == studentId) {
+              studentState = state;
+            }
+          });
+        }
       }
     }
     return studentState;
@@ -461,8 +432,8 @@ class _AttendanceTableState extends State<AttendanceTable> {
         fio: fio,
         id: id,
         format: format,
-        endDate: endDate,
-        startDate: startDate,
+        endDate: widget.endDate,
+        startDate: widget.startDate,
         attendance: widget.attendance,
       ),
     );

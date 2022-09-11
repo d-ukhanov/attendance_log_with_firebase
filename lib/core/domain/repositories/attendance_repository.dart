@@ -5,8 +5,10 @@ abstract class AttendanceRepository {
   /// Attendance stream
   Stream<List<AttendanceForGroupAndSubject>> attendanceForGroupAndSubject(
     String groupId,
-    String subjectId,
-  );
+    String subjectId, {
+    required String startDate,
+    required String endDate,
+  });
 
   ///Create or update an existing document in firebase with student attendance data for a specific lesson
   Future<void> updateAttendanceForStudent(
@@ -25,4 +27,6 @@ abstract class AttendanceRepository {
     String groupId,
     String subjectId,
   );
+
+  Future<String> getLastEntryDate();
 }

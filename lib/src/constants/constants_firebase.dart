@@ -26,6 +26,6 @@ mixin ConstantsFirebase {
   static const attendanceCollection = 'attendance';
   static const attendanceFieldGroupId = 'group_id';
   static const attendanceFieldSubjectId = 'subject_id';
-  static const attendanceFieldStudentId = 'student_id';
+  static const attendanceFieldStudentsAttendance = 'students_attendance';
   static const attendanceFieldDate = 'date';
 }

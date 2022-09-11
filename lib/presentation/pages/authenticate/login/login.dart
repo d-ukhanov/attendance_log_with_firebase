@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: Colors.transparent,
+          backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
         ),
         onPressed: () {

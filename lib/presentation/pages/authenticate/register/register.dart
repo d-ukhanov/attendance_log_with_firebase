@@ -139,7 +139,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: Colors.transparent,
+          backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
         ),
         onPressed: () async {

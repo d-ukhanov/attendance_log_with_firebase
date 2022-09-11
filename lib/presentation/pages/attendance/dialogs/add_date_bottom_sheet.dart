@@ -4,7 +4,6 @@ import 'package:attendance_log_with_firebase/core/domain/models/student.dart';
 import 'package:attendance_log_with_firebase/core/domain/repositories/attendance_repository.dart';
 import 'package:attendance_log_with_firebase/src/constants/constants_ui.dart';
 import 'package:flutter/material.dart';
-
 // Package imports:
 import 'package:intl/intl.dart';
 
@@ -105,24 +104,24 @@ class AddDateBottomSheet {
   }) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: ConstantsUI.colorEnd,
-        onPrimary: Colors.black,
+        foregroundColor: Colors.black,
+        backgroundColor: ConstantsUI.colorEnd,
       ),
       child: const Text(
         'Обновить дату',
         style: TextStyle(color: Colors.white),
       ),
-      onPressed: () {
+      onPressed: () async {
         if (formKey.currentState?.validate() ?? false) {
-          deleteDate(date);
-          addDate(dateTextFieldController.text);
-
-          attendanceRepository.updateAttendanceForStudent(
+          await attendanceRepository.updateAttendanceForStudent(
             date,
             groupId,
             subjectId,
             changeDate: dateTextFieldController.text,
           );
+
+          deleteDate(date);
+          addDate(dateTextFieldController.text);
 
           Navigator.pop(context);
         }
@@ -133,21 +132,22 @@ class AddDateBottomSheet {
   Widget _getDeleteDateButton(BuildContext context, {required String date}) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: ConstantsUI.colorEnd,
-        onPrimary: Colors.black,
+        foregroundColor: Colors.black,
+        backgroundColor: ConstantsUI.colorEnd,
       ),
       child: const Text(
         'Удалить все записи',
         style: TextStyle(color: Colors.white),
       ),
-      onPressed: () {
-        deleteDate(date);
-
-        attendanceRepository.deleteAttendanceForStudent(
+      onPressed: () async {
+        await attendanceRepository.deleteAttendanceForStudent(
           date,
           groupId,
           subjectId,
         );
+
+        deleteDate(date);
+
         Navigator.pop(context);
       },
     );
@@ -160,25 +160,25 @@ class AddDateBottomSheet {
   }) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: ConstantsUI.colorEnd,
-        onPrimary: Colors.black,
+        foregroundColor: Colors.black,
+        backgroundColor: ConstantsUI.colorEnd,
       ),
       child: const Text(
         'Добавить',
         style: TextStyle(color: Colors.white),
       ),
-      onPressed: () {
+      onPressed: () async {
         if (formKey.currentState?.validate() ?? false) {
           {
-            addDate(dateTextFieldController.text);
-
-            attendanceRepository.updateAttendanceForStudent(
+            await attendanceRepository.updateAttendanceForStudent(
               dateTextFieldController.text,
               groupId,
               subjectId,
               groupStudentIds:
                   students.map((student) => student.studentId).toList(),
             );
+
+            addDate(dateTextFieldController.text);
           }
           Navigator.pop(context);
         }

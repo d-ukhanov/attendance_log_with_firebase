@@ -1,11 +1,10 @@
 // Package imports:
-import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:attendance_log_with_firebase/core/domain/models/student.dart';
 // Project imports:
 import 'package:attendance_log_with_firebase/core/domain/repositories/attendance_repository.dart';
-import 'package:attendance_log_with_firebase/core/domain/models/student.dart';
 import 'package:attendance_log_with_firebase/src/constants/constants_firebase.dart';
 import 'package:attendance_log_with_firebase/utils/logger.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AttendanceRepositoryImpl implements AttendanceRepository {
   final CollectionReference attendanceCollection = FirebaseFirestore.instance
@@ -14,13 +13,23 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
   @override
   Stream<List<AttendanceForGroupAndSubject>> attendanceForGroupAndSubject(
     String groupId,
-    String subjectId,
-  ) {
+    String subjectId, {
+    required String startDate,
+    required String endDate,
+  }) {
     final attendanceForGroupAndSubject = attendanceCollection
         .where(ConstantsFirebase.attendanceFieldGroupId, isEqualTo: groupId)
         .where(
           ConstantsFirebase.attendanceFieldSubjectId,
           isEqualTo: subjectId,
+        )
+        .where(
+          ConstantsFirebase.attendanceFieldDate,
+          isGreaterThanOrEqualTo: startDate,
+        )
+        .where(
+          ConstantsFirebase.attendanceFieldDate,
+          isLessThanOrEqualTo: endDate,
         );
 
     return attendanceForGroupAndSubject
@@ -59,7 +68,8 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
             });
           } else {
             return attendanceCollection.doc(documentId).update({
-              '${ConstantsFirebase.attendanceFieldStudentId}.$studentId': state,
+              '${ConstantsFirebase.attendanceFieldStudentsAttendance}.$studentId':
+                  state,
             });
           }
         } else {
@@ -72,7 +82,8 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
             ConstantsFirebase.attendanceFieldDate: date,
             ConstantsFirebase.attendanceFieldGroupId: groupId,
             ConstantsFirebase.attendanceFieldSubjectId: subjectId,
-            ConstantsFirebase.attendanceFieldStudentId: studentAttendance,
+            ConstantsFirebase.attendanceFieldStudentsAttendance:
+                studentAttendance,
           });
         }
       });
@@ -110,13 +121,26 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
     }
   }
 
+  @override
+  Future<String> getLastEntryDate() async {
+    final lastSnap = await attendanceCollection
+        .orderBy(ConstantsFirebase.attendanceFieldDate)
+        .snapshots()
+        .first;
+    final String lastEntryDate =
+        lastSnap.docs.last.get(ConstantsFirebase.attendanceFieldDate);
+
+    return lastEntryDate;
+  }
+
   List<AttendanceForGroupAndSubject> _attendanceFromSnapshot(
     QuerySnapshot snapshot,
   ) {
     return snapshot.docs.map((doc) {
       return AttendanceForGroupAndSubject(
         attendanceMap:
-            doc.get(ConstantsFirebase.attendanceFieldStudentId) ?? {'': ''},
+            doc.get(ConstantsFirebase.attendanceFieldStudentsAttendance) ??
+                {'': ''},
         date: doc.get(ConstantsFirebase.attendanceFieldDate) ?? '',
       );
     }).toList();
